@@ -161,6 +161,17 @@ class Score:
         screen.blit(self.img, self.rct)  # スクリーンにblit
 
 
+class  Explosion:
+    """
+    爆発エフェクトに関するクラス
+    """ 
+    def __init__(self):
+        self.img1 = pg.image.load("fig/explosion.gif")  # Surfacce
+        self.img2 = pg.transform.flip(self.img1, True, False)  # 左右反転
+        self.imgs = [self.img1, self.img2]  # Surfaceをリストに格納
+
+
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
