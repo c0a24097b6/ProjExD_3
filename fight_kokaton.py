@@ -210,11 +210,11 @@ def main():
         bombs = [bomb for bomb in bombs if bomb is not None]
         beams = [beam for beam in beams if beam is not None]  # ビームリストに対して，要素がNoneでないものだけのリストに更新
 
-        new_beams = []
-        for beam in beams:
-            if check_bound(beam.rct) == (True, True):
-                new_beams.append(beam)
-        beams = new_beams
+        new_beams = beams = [b for b in beams if check_bound(b.rct)[0]]
+        # for beam in beams:
+        #     if check_bound(beam.rct) == (True, True):
+        #         new_beams.append(beam)
+        # beams = new_beams
 
 
         key_lst = pg.key.get_pressed()
