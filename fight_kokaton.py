@@ -169,6 +169,7 @@ def main():
     # bomb = Bomb((255, 0, 0), 10)
     bombs = [Bomb((255, 0, 0), 10) for _ in range(NUM_OF_BOMBS)]
     beam = None  # ゲーム初期化時にはビームは存在しない
+    beams = []  #  Beamクラスのインスタンスを複数扱うための空のリスト
     score = Score()  # Scoreインスタンスの生成
     clock = pg.time.Clock()
     tmr = 0
@@ -178,7 +179,8 @@ def main():
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 # スペースキー押下でBeamクラスのインスタンス生成
-                beam = Beam(bird)            
+                beam = Beam(bird)
+                beams.append(beam)  # リストにappend       
         screen.blit(bg_img, [0, 0])
         
         for b, bomb in enumerate(bombs):
@@ -192,21 +194,32 @@ def main():
                 time.sleep(1)                
                 return
         
-        for b, bomb in enumerate(bombs):
-            if beam is not None:
+        for i, beam in enumerate(beams):
+            if beam is None:
+                    continue 
+            for b, bomb in enumerate(bombs):
+                if bomb is None:
+                    continue
                 if beam.rct.colliderect(bomb.rct):
                     #  ビームが爆弾に当たったら、ビームと爆弾を消滅させる
-                    beam = None
+                    beams[i] = None  # 衝突した要素はNone
                     bombs[b] = None
                     score.value += 1  # 爆弾を打ち落としたらスコアアップ（1点）
                     bird.change_img(6, screen)
                     pg.display.update()
         bombs = [bomb for bomb in bombs if bomb is not None]
+        beams = [beam for beam in beams if beam is not None]  # ビームリストに対して，要素がNoneでないものだけのリストに更新
+
+        new_beams = []
+        for beam in beams:
+            if check_bound(beam.rct) == (True, True):
+                new_beams.append(beam)
+        beams = new_beams
 
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
-        if beam is not None:  # ビームが存在していたら
+        for beam in beams:  # ビームが存在していたら
             beam.update(screen)
         for bomb in bombs:   
             bomb.update(screen)
